@@ -19,8 +19,14 @@ export const options = {
 export default function () {
     const BASE_URL = "http://localhost:8080/api";
     
+    const params = {
+        headers: {
+            'Accept-Encoding': 'gzip'
+        }
+    };
+    
     // GET request para obtener todos los estudiantes
-    const response = http.get(`${BASE_URL}/students`);
+    const response = http.get(`${BASE_URL}/students`, params);
     
     // Verificar la respuesta
     const checkRes = check(response, {
