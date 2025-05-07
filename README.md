@@ -30,7 +30,11 @@ El Servicio Académico es una aplicación diseñada para la gestión educativa q
    ```bash
    ./mvnw clean install
    ```
-
+# Configuración de DevTools para reinicio automático
+spring.devtools.restart.enabled=true
+spring.devtools.restart.poll-interval=2s
+spring.devtools.restart.quiet-period=1s
+spring.devtools.livereload.enabled=true
 ## Configuración
 
 Las configuraciones principales se encuentran en el archivo `application.properties` (o `application.yml`) ubicado en `src/main/resources/`.

@@ -36,19 +36,19 @@ public class StudentService {
     
     @Transactional
     public List<Student> getAllStudents() {
-        log.info("Starting to fetch all students with enrollments (using N+1 anti-pattern)");
+        log.info("Iniciando carga de todos los estudiantes con matrículas (usando antipatrón N+1)");
         
         // Primer consulta: obtener todos los estudiantes
-        log.debug("Executing first query: Find all students");
+        log.debug("Ejecutando primera consulta: Obtener todos los estudiantes");
         List<Student> students = studentRepository.findAll();
-        log.debug("Found {} students", students.size());
+        log.debug("Encontrados {} estudiantes", students.size());
         
         int enrollmentQueryCount = 0;
         int courseQueryCount = 0;
         
         // N consultas adicionales: forzar la carga de enrollments para cada estudiante
         for (Student student : students) {
-            log.debug("Loading enrollments for student ID: {}, Name: {}", student.getId(), student.getName());
+            log.debug("Cargando matrículas para estudiante ID: {}, Nombre: {}", student.getId(), student.getName());
             
             // Esto forzará una consulta por cada estudiante (problema N+1)
             if (student.getEnrollments() == null) {
@@ -58,21 +58,21 @@ public class StudentService {
             Hibernate.initialize(student.getEnrollments());
             enrollmentQueryCount++;
             
-            log.debug("Found {} enrollments for student {}", student.getEnrollments().size(), student.getId());
+            log.debug("Encontradas {} matrículas para estudiante {}", student.getEnrollments().size(), student.getId());
             
             // También inicializar cada curso dentro de los enrollments (problema N+M)
             for (Enrollment enrollment : student.getEnrollments()) {
-                log.debug("Loading course for enrollment ID: {}", enrollment.getId());
+                log.debug("Cargando curso para matrícula ID: {}", enrollment.getId());
                 Hibernate.initialize(enrollment.getCourse());
                 courseQueryCount++;
             }
         }
         
-        log.info("Completed fetching all data with anti-pattern approach:");
-        log.info("- 1 query to fetch all students");
-        log.info("- {} queries to fetch enrollments (N+1 problem)", enrollmentQueryCount);
-        log.info("- {} queries to fetch courses (N+M problem)", courseQueryCount);
-        log.info("- Total queries executed: {}", 1 + enrollmentQueryCount + courseQueryCount);
+        log.info("Completada la carga de todos los datos con enfoque antipatrón:");
+        log.info("- 1 consulta para obtener todos los estudiantes");
+        log.info("- {} consultas para obtener matrículas (problema N+1)", enrollmentQueryCount);
+        log.info("- {} consultas para obtener cursos (problema N+M)", courseQueryCount);
+        log.info("- Total de consultas ejecutadas: {}", 1 + enrollmentQueryCount + courseQueryCount);
         
         return students;
     }
